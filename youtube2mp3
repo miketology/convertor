@@ -1,0 +1,149 @@
+{
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/miketology/convertor/blob/main/youtube2mp3\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "markdown",
+      "source": [
+        "**YOUTUBE to MP3 Convertor**"
+      ],
+      "metadata": {
+        "id": "OJmu4nxn7IuZ"
+      }
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import os\n",
+        "import subprocess\n",
+        "import glob\n",
+        "\n",
+        "def simple_yt_dlp(url, download_folder=\"downloads\"):\n",
+        "    \"\"\"Simple version that always shows file location\"\"\"\n",
+        "\n",
+        "    # Create download folder\n",
+        "    if not os.path.exists(download_folder):\n",
+        "        os.makedirs(download_folder)\n",
+        "\n",
+        "    print(f\"📁 Downloading to: {os.path.abspath(download_folder)}\")\n",
+        "\n",
+        "    try:\n",
+        "        # Get list of files before download\n",
+        "        before_files = set(glob.glob(os.path.join(download_folder, \"*.mp3\")))\n",
+        "\n",
+        "        # Download command\n",
+        "        command = [\n",
+        "            \"yt-dlp\",\n",
+        "            \"-x\", \"--audio-format\", \"mp3\",\n",
+        "            \"-o\", os.path.join(download_folder, \"%(title)s.%(ext)s\"),\n",
+        "            url\n",
+        "        ]\n",
+        "\n",
+        "        print(\"⏳ Downloading...\")\n",
+        "        result = subprocess.run(command, capture_output=True, text=True)\n",
+        "\n",
+        "        if result.returncode == 0:\n",
+        "            # Get list of files after download\n",
+        "            after_files = set(glob.glob(os.path.join(download_folder, \"*.mp3\")))\n",
+        "\n",
+        "            # Find new files\n",
+        "            new_files = after_files - before_files\n",
+        "\n",
+        "            if new_files:\n",
+        "                for file_path in new_files:\n",
+        "                    file_size = os.path.getsize(file_path) / (1024 * 1024)\n",
+        "                    print(f\"✅ SUCCESS! Downloaded: {file_path}\")\n",
+        "                    print(f\"💾 Size: {file_size:.2f} MB\")\n",
+        "                    return file_path\n",
+        "            else:\n",
+        "                print(\"✅ Download completed! Check the download folder.\")\n",
+        "                return True\n",
+        "        else:\n",
+        "            print(f\"❌ Error: {result.stderr}\")\n",
+        "            return False\n",
+        "\n",
+        "    except Exception as e:\n",
+        "        print(f\"❌ Error: {str(e)}\")\n",
+        "        return False\n",
+        "\n",
+        "# Usage\n",
+        "if __name__ == \"__main__\":\n",
+        "    url = input(\"Enter YouTube URL: \").strip()\n",
+        "    if url:\n",
+        "        simple_yt_dlp(url)"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "YEm378o07MDO",
+        "outputId": "e3a48c07-3a9b-442c-96cb-c305ed7612b5"
+      },
+      "execution_count": 3,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Enter YouTube URL: https://youtu.be/8MiZqmYx9Xg?si=QGcl54K_AcYJcd36\n",
+            "📁 Downloading to: /content/downloads\n",
+            "⏳ Downloading...\n",
+            "✅ SUCCESS! Downloaded: downloads/愛心娃娃.mp3\n",
+            "💾 Size: 3.85 MB\n"
+          ]
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "ea306810",
+        "outputId": "48397f26-9603-4c0c-a518-73a386868de2"
+      },
+      "source": [
+        "!pip install yt-dlp"
+      ],
+      "execution_count": 2,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Collecting yt-dlp\n",
+            "  Downloading yt_dlp-2025.10.22-py3-none-any.whl.metadata (176 kB)\n",
+            "\u001b[2K     \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m176.0/176.0 kB\u001b[0m \u001b[31m5.6 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hDownloading yt_dlp-2025.10.22-py3-none-any.whl (3.2 MB)\n",
+            "\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m3.2/3.2 MB\u001b[0m \u001b[31m49.1 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\n",
+            "\u001b[?25hInstalling collected packages: yt-dlp\n",
+            "Successfully installed yt-dlp-2025.10.22\n"
+          ]
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "colab": {
+      "name": "Welcome To Colab",
+      "toc_visible": true,
+      "provenance": [],
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "display_name": "Python 3",
+      "name": "python3"
+    }
+  },
+  "nbformat": 4,
+  "nbformat_minor": 0
+}
